@@ -1,3 +1,6 @@
+# exclude due to sensitive data
+activedirectory_test.go
+
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
 *.a

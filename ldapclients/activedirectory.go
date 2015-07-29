@@ -1,4 +1,4 @@
-package main
+package ldapclients
 
 import (
 	"fmt"
@@ -15,12 +15,42 @@ const (
 
 type ActiveDirectoryClient struct {
 	*LDAPClient
+	// cache (if enabled)
+	cache *CredentialsCache
 }
 
 func NewActiveDirectoryClient(ldapUri, bindDn, bindPass string, searchBase ...string) (ad *ActiveDirectoryClient, err error) {
 	ad = &ActiveDirectoryClient{}
 	ad.LDAPClient, err = NewLDAPClient(ldapUri, bindDn, bindPass, searchBase...)
 	return
+}
+
+func (ad *ActiveDirectoryClient) Authenticate(username, password string) (err error) {
+	if ad.cache != nil && ad.cache.CheckCreds(username, password) {
+		return
+	}
+
+	var (
+		userDn string
+		userAD *ActiveDirectoryClient
+	)
+
+	if userDn, err = ad.GetUserDN(username); err != nil {
+		return
+	}
+
+	if userAD, err = NewActiveDirectoryClient(ad.URI, userDn, password); err == nil && ad.cache != nil {
+		// cache
+		ad.cache.CacheCreds(NewCredentials(username, userDn, password))
+	}
+	userAD.Close()
+	return
+}
+
+func (ad *ActiveDirectoryClient) EnableCaching(ttl int64) {
+	if ad.cache == nil {
+		ad.cache = NewCredentialsCache(ttl)
+	}
 }
 
 func (ad *ActiveDirectoryClient) GetUserDN(username string) (userDN string, err error) {

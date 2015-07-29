@@ -1,10 +1,10 @@
-package main
+package ldapclients
 
 import (
 	"crypto/tls"
 	"fmt"
 	"github.com/go-ldap/ldap"
-	log "github.com/golang/glog"
+	//log "github.com/golang/glog"
 	"strings"
 )
 
