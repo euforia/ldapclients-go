@@ -13,7 +13,7 @@ go get github.com/euforia/ldapclients-go
 
 Usage
 -----
-
+```
 import "github.com/euforia/ldapclients-go"
 
 client, err := NewActiveDirectoryClient(uri, bind_dn, bind_pass, search_base)
@@ -27,3 +27,4 @@ client.EnableCaching(0)
 
 // Auth a user with a password
 client.Authenticate(username, password)
+```
