@@ -54,7 +54,6 @@ func (cc *CredentialsCache) CheckCreds(username, password string) bool {
 func (cc *CredentialsCache) CacheCreds(creds *credentials) {
 	_, ok := cc.cache[creds.Username]
 	if ok {
-
 		cc.expireCacheCred(creds.Username)
 	}
 	cc.cache[creds.Username] = creds

@@ -27,8 +27,10 @@ func NewActiveDirectoryClient(ldapUri, bindDn, bindPass string, searchBase ...st
 
 func (ad *ActiveDirectoryClient) Authenticate(username, password string) (err error) {
 	if ad.cache != nil && ad.cache.CheckCreds(username, password) {
+		log.V(10).Infof("Cache hit: %s\n", username)
 		return
 	}
+	log.V(10).Infof("Cache miss: %s\n", username)
 
 	var (
 		userDn string
@@ -51,6 +53,7 @@ func (ad *ActiveDirectoryClient) EnableCaching(ttl int64) {
 	if ad.cache == nil {
 		ad.cache = NewCredentialsCache(ttl)
 	}
+	log.V(11).Infof("Caching enabled!\n")
 }
 
 func (ad *ActiveDirectoryClient) GetUserDN(username string) (userDN string, err error) {
